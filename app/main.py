@@ -3,7 +3,7 @@ from typing import Union
 from fastapi import FastAPI ,Request
 from pydantic import BaseModel
 
-import requests
+import ipaddress
 
 app = FastAPI()
 
@@ -19,12 +19,24 @@ def read_root(request: Request):
     return {"client_host": client_host}
 
 @app.get("/v1/")
-def read_root():
+def read_root_v1():
     return {"Hello": "World"}
 
-@app.get("/v1/")
-def read_root():
-    return {"Hello": "World"}
+@app.get("/v1//cidr2ipv4/{cidr_block}")
+def cidr_to_ip_v4(cidr_block: str ):
+    IP_Addr = ipaddress.ip_interface(cidr_block.replace('%2F', '/'))
+    Net_Addr = IP_Addr.network
+    pref_len = IP_Addr.with_prefixlen
+    Mask = IP_Addr.with_netmask
+    wildcard = IP_Addr.hostmask
+    broadcast_address = Net_Addr.broadcast_address
+    return {"Network_Address ": str(Net_Addr).split('/')[0],
+            "Broadcast_Address" :  broadcast_address,
+            "CIDR_Notation": pref_len.split('/')[1],
+            "Subnet_Mask":  Mask.split('/')[1],
+            "Wildcard_Mask" :  wildcard,
+            "First_IP":  list(Net_Addr.hosts())[0],
+            "Last_IP":  list(Net_Addr.hosts())[-1] }
 
 
 @app.get("/v1//items/{item_id}")
