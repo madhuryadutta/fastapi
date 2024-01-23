@@ -3,6 +3,9 @@ from typing import Union
 from fastapi import FastAPI ,Request
 from pydantic import BaseModel
 
+from fastapi.encoders import jsonable_encoder
+from fastapi.responses import JSONResponse
+
 import ipaddress
 
 app = FastAPI()
@@ -17,6 +20,16 @@ class Item(BaseModel):
 def read_root(request: Request):
     client_host = request.client.host
     return {"client_host": client_host}
+
+@app.get("/request")
+def read_root(request: Request):
+    user_agent = request.headers
+    outputdict={}
+    for x in user_agent:
+        print(x+' : '+request.headers.get(x))
+        outputdict[x]=request.headers.get(x)
+    json_compatible_data = jsonable_encoder(outputdict)
+    return JSONResponse(content=json_compatible_data)
 
 @app.get("/v1/")
 def read_root_v1():
