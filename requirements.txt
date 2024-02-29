@@ -1,3 +1,8 @@
-fastapi>=0.68.0,<0.69.0
-pydantic>=1.8.0,<2.0.0
-uvicorn>=0.15.0,<0.16.0
+asgiref==3.7.2
+click==8.1.7
+fastapi==0.68.2
+h11==0.14.0
+pydantic==1.10.14
+starlette==0.36.2
+typing_extensions==4.10.0
+uvicorn==0.15.0
